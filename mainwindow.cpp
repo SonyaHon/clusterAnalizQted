@@ -6,6 +6,8 @@
 #include <QString>
 #include <QFileDialog>
 #include <QDir>
+#include <QLabel>
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,50 +21,46 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_b_dir_ok_clicked()
-{
-    QString dirName, resDirName;
-    dirName = ui->tb_directory->text();
-    resDirName = ui->tb_result_dir->text();
-
-    if(QDir(dirName).exists() && QDir(resDirName).exists()) {
-        ui->l_ok->setText("OK");
-        ui->b_start->setEnabled(true);
-    }
-    else if(QDir(dirName).exists() && !QDir(resDirName).exists())
-        ui->l_ok->setText("No result folder");
-    else if(!QDir(dirName).exists() && QDir(resDirName).exists())
-        ui->l_ok->setText("No files folder");
-}
-
-void MainWindow::on_b_start_clicked()
-{
-    clusterAnaliz ca = clusterAnaliz(ui->tb_directory->text());
-    ca.caDo(atoi(ui->s_clNum->text().toStdString().c_str()), ui->tb_result_dir->text(), ui->tb_directory->text(), ui->checkBox->checkState());
-}
-
 void MainWindow::on_b_browse_dir_clicked()
 {
-    QString dirName = QFileDialog::getExistingDirectory();
-    dirName += "/";
-    ui->tb_directory->setText(dirName);
+    ui->tb_directory->setText(QFileDialog::getExistingDirectory());
 }
 
 void MainWindow::on_b_resDirBrowse_clicked()
 {
-    QString dirName = QFileDialog::getExistingDirectory();
-    ui->tb_result_dir->setText(dirName);
+    ui->tb_result_dir->setText(QFileDialog::getExistingDirectory());
 }
 
-
-
-void MainWindow::on_tb_directory_textEdited(const QString &arg1)
+void MainWindow::on_b_dir_ok_clicked()
 {
-    ui->l_ok->setText("select result folder");
+    if(QDir(ui->tb_directory->text()).exists() && QDir(ui->tb_result_dir->text()).exists()) {
+        ui->b_start->setEnabled(true);
+    }
 }
 
+void MainWindow::changeLbl(QString str) {
+    ui->l_ok->setText(str);
+}
 
-void MainWindow::on_tb_result_dir_textEdited(const QString &arg1)
+void MainWindow::on_b_start_clicked()
 {
-    ui->l_ok->setText("press ok to check folders");
+    ui->l_ok->setText("Starting...");
+
+   //clusterAnaliz ca = clusterAnaliz(ui->tb_directory->text() + "/");
+   // ca.caDo(atoi(ui->s_clNum->text().toStdString().c_str()), ui->tb_result_dir->text(), ui->tb_directory->text(), ui->checkBox->isChecked());
+   //  ui->l_status->setText("Done.");
+   QThread *thread = new QThread;
+   QCoreApplication::processEvents();
+   clusterAnaliz *ca = new clusterAnaliz(Q_NULLPTR, ui->tb_directory->text(), ui->tb_result_dir->text(),
+                                         ui->checkBox->isChecked(), atoi(ui->s_clNum->text().toStdString().c_str()));
+
+   ca->moveToThread(thread);
+
+   connect(thread, SIGNAL(started()), ca, SLOT(caDo()));
+   connect(ca, SIGNAL(finished()), thread, SLOT(quit()));
+   connect(ca, SIGNAL(statusChanged(QString)), this, SLOT(changeLbl(QString)));
+
+   thread->start();
+
+
 }

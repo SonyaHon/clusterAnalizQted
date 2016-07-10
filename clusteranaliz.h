@@ -2,13 +2,23 @@
 #include <vector>
 #include "text.h"
 #include <QString>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QApplication>
+#include <QObject>
 
-class clusterAnaliz {
+class clusterAnaliz : public  QObject {
+    Q_OBJECT
 private:
     std::vector<text> texts;
     void findTextMass(int);
 
     double textDist(text, text);
+
+    QString dirName;
+    QString resDirName;
+    bool shouldBeCleaned;
+    int clustersAmount;
 
     struct centroid {
 
@@ -31,6 +41,15 @@ private:
     };
 
 public:
-    clusterAnaliz(QString);
-    void caDo(int, QString, QString, bool shouldBeCleaned);
+    clusterAnaliz(QObject *parent, QString, QString, bool, int);
+    ~clusterAnaliz();
+
+public slots:
+    void caDo();
+    void stop();
+
+signals:
+
+    void finished();
+    void statusChanged(QString);
 };

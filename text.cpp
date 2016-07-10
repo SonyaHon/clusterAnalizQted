@@ -9,6 +9,9 @@ std::wstring canonL = L"цкнгшщзхфвпрлджчмстбьъ1234567890";
 std::wstring canonU = L"ЦКНГШЩЗХФВПРЛДЖЧМСТБЬЪ";
 std::string euCanon = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm+-:;&$#@";
 
+std::wstring prevStr = L".";
+std::wstring dotS = L".";
+
 void text::setMass(int value) {
     mass = value;
 }
@@ -30,7 +33,7 @@ text text::operator=(text &t) {
     return *this;
 }
 
-text text::operator=(const text &t) {
+text  text::operator=(const text &t) {
     text a = text();
     a.terms = t.terms;
     a.mass = t.mass;
@@ -66,37 +69,77 @@ text::text(std::string str, std::string name) {
             myPair p;
             p.str = finaleStr;
             p.weight = 0;
+            p.multi = 1;
 
             terms.push_back(p);
         }
         else if (!flag) {
-            if (term.size() < 8) {
-                continue;
-            }
+
+            bool isName = false;
+
             wchar_t * ws = new wchar_t[(term.size() / 2)*sizeof(wchar_t)];
             mbstowcs(ws, term.c_str(), term.size() / 2);
+             std::wstring wstr(ws);
 
-            std::wstring wstr(ws);
-            std::wstring finaleStr;
-
-            for (size_t i = 0; i < wstr.size(); ++i) {
-                for (size_t j = 0; j < canonL.size(); ++j) {
-                    if (wstr[i] == canonL[j]) {
-                        finaleStr += wstr[i];
-                    }
-                    else if (wstr[i] == canonU[j]) {
-                        finaleStr += canonL[j];
-                    }
+            for(unsigned int i = 0; i < canonU.size(); ++i) {
+                if(prevStr[prevStr.size() - 1] != dotS[0] && wstr[0] == canonU[i]) {
+                    isName = true;
+                    break;
                 }
             }
 
-            myPair p;
-            p.str = finaleStr;
-            p.weight = 0;
+            if(!isName) {
+             if (term.size() < 6) {
+                 continue;
+                }
 
-            terms.push_back(p);
-        }
-    }
+                std::wstring finaleStr;
+
+                for (size_t i = 0; i < wstr.size(); ++i) {
+                    for (size_t j = 0; j < canonL.size(); ++j) {
+                        if (wstr[i] == canonL[j]) {
+                            finaleStr += wstr[i];
+                        }
+                      else if (wstr[i] == canonU[j]) {
+                         finaleStr += canonL[j];
+                        }
+                 }
+                }
+
+             myPair p;
+             p.str = finaleStr;
+             p.weight = 0;
+             p.multi = 1;
+
+             terms.push_back(p);
+         }
+         else   if(isName) {
+                if (term.size() < 6) {
+                    continue;
+                   }
+
+                   std::wstring finaleStr;
+
+                   for (size_t i = 0; i < wstr.size(); ++i) {
+                       for (size_t j = 0; j < canonL.size(); ++j) {
+                           if (wstr[i] == canonL[j]) {
+                               finaleStr += wstr[i];
+                           }
+                         else if (wstr[i] == canonU[j]) {
+                            finaleStr += canonL[j];
+                           }
+                    }
+                   }
+
+                myPair p;
+                p.str = finaleStr;
+                p.weight = 0;
+                p.multi = 1.5;
+
+                terms.push_back(p);
+            }
+      }
+  }
 
     mass = 0;
 }
