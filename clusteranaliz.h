@@ -52,4 +52,5 @@ signals:
 
     void finished();
     void statusChanged(QString);
+    void unBlock();
 };

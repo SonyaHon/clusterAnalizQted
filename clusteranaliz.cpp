@@ -76,110 +76,99 @@ void clusterAnaliz::caDo() {
     std::vector<clusterAnaliz::centroid> centroids;
     std::vector<int> usedIdxs;
 
-    for (size_t i = 0; i < clustersAmount; ++i) {
-        emit statusChanged("Cluster: " + QString::number(i));
+emit statusChanged("Cluster 1 ...");
+int fIdx = rand()%texts.size();
 
-        bool notValid = false;
-        int idx = rand() % texts.size();
+clusterAnaliz::centroid c;
+c.mass = 0;
+c.t_idx = fIdx;
+c.c_text = texts[fIdx];
+usedIdxs.push_back(fIdx);
+centroids.push_back(c);
 
-        for(size_t k = 0; k < centroids.size(); ++k) {
-            if(idx == centroids[i].t_idx) {
-                ++clustersAmount;
-                notValid = true;
-                break;
+text mainT = c.c_text;
+
+emit statusChanged("Cluster 2 ...");
+
+double dist = textDist(mainT, texts[fIdx]);
+int idx = fIdx;
+for(size_t i = 0; i < texts.size(); ++i) {
+    if(dist > textDist(mainT, texts[i])) {
+        dist = textDist(mainT, texts[i]);
+        idx = i;
+    }
+}
+
+clusterAnaliz::centroid temp;
+temp.mass = 0;
+temp.t_idx = idx;
+temp.c_text = texts[idx];
+usedIdxs.push_back(idx);
+centroids.push_back(temp);
+
+int m = 1;
+int textId = 0;
+for(size_t cl = 0; cl < clustersAmount - 2; ++cl) {
+    emit statusChanged("Cluster " + QString::number(cl + 2) + " ...");
+    for(size_t clT = m; clT < centroids.size(); ++clT) { // Прибавление текста
+        mainT += texts[centroids[clT].t_idx];
+    }
+
+    m++;
+
+    for(size_t t = 0 ; t < texts.size(); ++t) { // Поиск не использованого текста
+        int count = 0;
+        for(size_t uI = 0; uI < usedIdxs.size(); ++uI) {
+            if(t != usedIdxs[uI]) {
+               count++;
             }
         }
-        if(!notValid) {
-            clusterAnaliz::centroid c;
-            c.mass = 0;
-            c.t_idx = idx;
-            text temp = texts[idx];
-            c.c_text = temp;
-            centroids.push_back(c);
-
+        if(count == usedIdxs.size()) {
+            textId = t;
+            break;
         }
     }
 
+    dist = textDist(mainT, texts[textId]);
+    idx = textId;
 
-/*
-    int fIdx = rand() % texts.size();
-    clusterAnaliz::centroid c;
-    c.mass = 0;
-    c.t_idx = fIdx;
-    text temp = texts[fIdx];
-    c.c_text = temp;
-
-    usedIdxs.push_back(fIdx);
-
-    centroids.push_back(c);
-
-    //std::cout << temp.getFileName() << "HELLO" << std::endl;
-
-    std::vector<text> ctexts;
-    ctexts.push_back(temp);
-
-    for(size_t i = 0; i < clustersAmount - 1; ++i) {
-
-        std::vector<double> masses;
-
-        for(size_t k = 0; k < texts.size(); ++k) {
-            double mass = 0;
-            for(size_t j = 0; j < ctexts.size(); ++j) {
-                mass += textDist(texts[k], ctexts[j]);
-            }
-            masses.push_back(mass);
-            std::cout << masses[k] << std::endl;
-        }
-
-        int idx = 0;
-        int mass = masses[0];
-
-        for(size_t m = 0; m < masses.size(); ++m) {
-            if(mass > masses[m]) {
-                puts("HELLO");
-                mass = masses[m];
-                idx = m;
+    // Поиск максимально не похожего текста
+    for(size_t t = 0; t < texts.size(); ++t) {
+        emit statusChanged("Setting text " + QString::number(t + 1) + " ...");
+        int count = 0;
+        for(size_t uI = 0; uI < usedIdxs.size(); ++uI) {
+            if(t != usedIdxs[uI]) {
+               count++;
             }
         }
-
-        std::cout << idx << std::endl;
-
-    }*/
-//-------------------------------------------------------------------------------------------------
-    for (size_t k = 0; k < 5; ++k) {
-        emit statusChanged(QString::number(k) + " Step...");
-        for (int i = 0; i < texts.size(); ++i) {
-            double dist = 0;
-            int whereIdx = 0;
-            for ( int j = 0; j < centroids.size(); ++j) {
-
-                if (dist < textDist(texts[i], centroids[j].c_text)) {
-                    dist = textDist(texts[i], centroids[j].c_text);
-                    whereIdx = j;
-                }
+        if(count == usedIdxs.size()) {
+            // Текс не был использован ранее, проверяем его на схожеть с mainT
+            if(dist > textDist(mainT, texts[t])) {
+                dist = textDist(mainT, texts[t]);
+                idx = t;
             }
-
-            centroids[whereIdx].c_texts.push_back(texts[i]);
         }
-
-        for (size_t i = 0; i < centroids.size(); ++i) {
-            centroids[i].countMass();
-        }
-
     }
 
-    for (int i = 0; i < texts.size(); ++i) {
-        double dist = 0;
-        int whereIdx = 0;
-        for ( int j = 0; j < centroids.size(); ++j) {
+    clusterAnaliz::centroid temp1;
+    temp1.c_text = texts[idx];
+    temp1.t_idx = idx;
+    temp1.mass = 0;
+    usedIdxs.push_back(idx);
+    centroids.push_back(temp1);
+}
 
-            if (dist < textDist(texts[i], centroids[j].c_text)) {
-                dist = textDist(texts[i], centroids[j].c_text);
-                whereIdx = j;
-            }
+for(size_t t = 0; t < texts.size(); ++t) {
+    double di = textDist(texts[t], centroids[0].c_text);
+    int whereIdx = 0;
+    for(size_t cl = 0; cl < centroids.size(); ++cl) {
+        if(di < textDist(texts[t], centroids[cl].c_text)) {
+            di = textDist(texts[t], centroids[cl].c_text);
+            whereIdx = cl;
         }
-        centroids[whereIdx].c_texts.push_back(texts[i]);
     }
+    centroids[whereIdx].c_texts.push_back(texts[t]);
+}
 
     if(shouldBeCleaned) {
         clearDir(resDirName);
@@ -195,6 +184,7 @@ void clusterAnaliz::caDo() {
     }
 
     emit statusChanged("Done.");
+    emit unBlock();
     emit finished();
 
 }

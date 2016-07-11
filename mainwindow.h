@@ -26,6 +26,7 @@ private slots:
     void on_b_start_clicked();
 
     void changeLbl(QString);
+    void unBlock();
 
 public:
     Ui::MainWindow *ui;

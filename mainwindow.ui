@@ -89,7 +89,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>select folder with files</string>
+     <string>press ok to check folders</string>
     </property>
    </widget>
    <widget class="QPushButton" name="b_start">
