@@ -2,12 +2,13 @@
 #include <vector>
 #include <string>
 #include <QObject>
+#include <QString>
 
 class text {
 
 private:
-    int mass; // Not used ((
-    std::string fileName;
+    double mass; // Not used ((
+    QString fileName;
 
 public:
 
@@ -17,16 +18,17 @@ public:
         double multi;
     };
 
+
     std::vector<myPair> terms;
-    text(std::string, std::string);
+    text(std::string, QString);
     text();
     ~text() {};
-    void setMass(int);
-    int getMass();
+    void setMass(double);
+    double getMass();
 
     void print();
 
-    std::string getFileName() {
+    QString getFileName() {
         return fileName;
     }
 

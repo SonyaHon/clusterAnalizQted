@@ -6,6 +6,7 @@
 #include "ui_mainwindow.h"
 #include <QApplication>
 #include <QObject>
+#include <map>
 
 class clusterAnaliz : public  QObject {
     Q_OBJECT
@@ -13,12 +14,18 @@ private:
     std::vector<text> texts;
     void findTextMass(int);
 
+    std::map <QString, std::map <QString, double> > weights;
+
+
     double textDist(text, text);
+    double textDistS(QString, QString);
 
     QString dirName;
     QString resDirName;
     bool shouldBeCleaned;
     int clustersAmount;
+    bool customFunc;
+    QString csvAddr;
 
     struct centroid {
 
@@ -41,7 +48,7 @@ private:
     };
 
 public:
-    clusterAnaliz(QObject *parent, QString, QString, bool, int);
+    clusterAnaliz(QObject *parent, QString, QString, bool, int, bool, QString);
     ~clusterAnaliz();
 
 public slots:

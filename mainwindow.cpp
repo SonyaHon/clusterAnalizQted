@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QThread>
+#include <QStandardPaths>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -56,13 +57,11 @@ void MainWindow::on_b_start_clicked()
     ui->b_browse_dir->setEnabled(false);
     ui->b_resDirBrowse->setEnabled(false);
     ui->b_dir_ok->setEnabled(false);
-   //clusterAnaliz ca = clusterAnaliz(ui->tb_directory->text() + "/");
-   // ca.caDo(atoi(ui->s_clNum->text().toStdString().c_str()), ui->tb_result_dir->text(), ui->tb_directory->text(), ui->checkBox->isChecked());
-   //  ui->l_status->setText("Done.");
    QThread *thread = new QThread;
    QCoreApplication::processEvents();
    clusterAnaliz *ca = new clusterAnaliz(Q_NULLPTR, ui->tb_directory->text(), ui->tb_result_dir->text(),
-                                         ui->checkBox->isChecked(), atoi(ui->s_clNum->text().toStdString().c_str()));
+                                         ui->checkBox->isChecked(), atoi(ui->s_clNum->text().toStdString().c_str()),
+                                         ui->cb_custom_func->isChecked(), ui->tb_csv_table->text());
 
    ca->moveToThread(thread);
 
@@ -72,4 +71,24 @@ void MainWindow::on_b_start_clicked()
    connect(ca, SIGNAL(unBlock()), this, SLOT(unBlock()));
 
    thread->start();
+}
+
+void MainWindow::on_cb_custom_func_clicked(bool checked)
+{
+    if(checked) {
+        ui->b_csv_browse->setEnabled(true);
+        ui->tb_csv_table->setEnabled(true);
+    }
+    else {
+        ui->b_csv_browse->setEnabled(false);
+        ui->tb_csv_table->setEnabled(false);
+    }
+}
+
+void MainWindow::on_b_csv_browse_clicked()
+{
+    QString dir = QStandardPaths::locate(QStandardPaths::DocumentsLocation, QString(), QStandardPaths::LocateDirectory);
+    ui->tb_csv_table->setText(QFileDialog::getOpenFileName(this, "CSV Table",
+                                                           dir,
+                                                           tr("CSV tables (*.csv);; All files(*.*)")));
 }

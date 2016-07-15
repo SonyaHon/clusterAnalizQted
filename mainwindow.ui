@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>533</width>
-    <height>313</height>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,8 +69,8 @@
    <widget class="QLabel" name="l_status">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>190</y>
+      <x>20</x>
+      <y>250</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -82,8 +82,8 @@
    <widget class="QLabel" name="l_ok">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>190</y>
+      <x>70</x>
+      <y>250</y>
       <width>411</width>
       <height>31</height>
      </rect>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
+      <y>280</y>
       <width>511</width>
       <height>31</height>
      </rect>
@@ -184,6 +184,48 @@
     </property>
     <property name="text">
      <string>Clear result folder</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_custom_func">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>190</y>
+      <width>231</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use custom csv table as distance</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="tb_csv_table">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>391</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_csv_browse">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>429</x>
+      <y>220</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Browse</string>
     </property>
    </widget>
   </widget>

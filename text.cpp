@@ -12,7 +12,7 @@ std::string euCanon = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm+-:;&
 std::wstring prevStr = L".";
 std::wstring dotS = L".";
 
-void text::setMass(int value) {
+void text::setMass(double value) {
     mass = value;
 }
 
@@ -42,7 +42,7 @@ text  text::operator=(const text &t) {
 }
 
 
-text::text(std::string str, std::string name) {
+text::text(std::string str, QString name) {
     fileName = name;
     std::ifstream file(str.c_str());
     std::string term;
@@ -144,6 +144,6 @@ text::text(std::string str, std::string name) {
     mass = 0;
 }
 
-int text::getMass() {
+double text::getMass() {
     return mass;
 }

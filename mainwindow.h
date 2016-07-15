@@ -28,6 +28,10 @@ private slots:
     void changeLbl(QString);
     void unBlock();
 
+    void on_cb_custom_func_clicked(bool checked);
+
+    void on_b_csv_browse_clicked();
+
 public:
     Ui::MainWindow *ui;
 };
